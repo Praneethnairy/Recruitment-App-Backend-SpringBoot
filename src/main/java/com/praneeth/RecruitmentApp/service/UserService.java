@@ -14,5 +14,6 @@ public interface UserService {
     public List<User> checkUser(String email,String password);
 
     public ProfileDetails fetchProfileDetails(String email,String name,int utype);
+    public ProfileDetails updateAbout(String email,String name,int utype,String uabout);
 
 }

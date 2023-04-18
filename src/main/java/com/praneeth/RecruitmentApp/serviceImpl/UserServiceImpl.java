@@ -105,6 +105,69 @@ public class UserServiceImpl implements UserService {
             }
             else{
                 // TODO : Write code for Recruiter profile
+                PreparedStatement stmt1 = connection.prepareStatement("select uid,uname,uemail,uabout,ucompany from recruiter where uname=? and uemail=?;");
+                stmt1.setString(1,name);
+                stmt1.setString(2,email);
+                ResultSet rs = stmt1.executeQuery();
+                while(rs.next()){
+                    p.setUid(rs.getInt(1));
+                    p.setUname(rs.getString(2));
+                    p.setUemail(rs.getString(3));
+                    p.setuAbout(rs.getString(4));
+                    p.setUcompany(rs.getString(5));
+                }
+
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return p;
+    }
+    public ProfileDetails updateAbout(String email,String name,int utype,String uabout){
+        ProfileDetails p = new ProfileDetails();
+        try{
+            if(utype == 1){
+                PreparedStatement stmt = connection.prepareStatement("update applicant set uabout=? where uname=? and uemail=?;");
+                stmt.setString(1,uabout);
+                stmt.setString(2,name);
+                stmt.setString(3,email);
+                stmt.executeUpdate();
+                PreparedStatement stmt1 = connection.prepareStatement("select uid,uname,uemail,uabout from applicant where uname=? and uemail=?;");
+                stmt1.setString(1,name);
+                stmt1.setString(2,email);
+                ResultSet rs = stmt1.executeQuery();
+                while(rs.next()){
+                    p.setUid(rs.getInt(1));
+                    p.setUname(rs.getString(2));
+                    p.setUemail(rs.getString(3));
+                    p.setuAbout(rs.getString(4));
+                }
+                PreparedStatement skillStmt = connection.prepareStatement("with skillMap(uid,skillName) as (select a.uid,s.skillName from applicant_skill as a join skill as s on a.sid = s.sid) select sm.skillName from skillMap as sm join applicant as ap on sm.uid=ap.uid where ap.uid=?;");
+                skillStmt.setInt(1,p.getUid());
+                ResultSet skillResult = skillStmt.executeQuery();
+                List<String> skills = new ArrayList<>();
+                while(skillResult.next()){
+                    skills.add(skillResult.getString(1));
+                }
+                p.setUskills(skills);
+            }
+            else{
+                PreparedStatement stmt = connection.prepareStatement("update recruiter set uabout=? where uname=? and uemail=?;");
+                stmt.setString(1,uabout);
+                stmt.setString(2,name);
+                stmt.setString(3,email);
+                stmt.executeUpdate();
+                PreparedStatement stmt1 = connection.prepareStatement("select uid,uname,uemail,uabout,ucompany from recruiter where uname=? and uemail=?;");
+                stmt1.setString(1,name);
+                stmt1.setString(2,email);
+                ResultSet rs = stmt1.executeQuery();
+                while(rs.next()){
+                    p.setUid(rs.getInt(1));
+                    p.setUname(rs.getString(2));
+                    p.setUemail(rs.getString(3));
+                    p.setuAbout(rs.getString(4));
+                    p.setUcompany(rs.getString(5));
+                }
             }
         }catch (SQLException e){
             e.printStackTrace();
