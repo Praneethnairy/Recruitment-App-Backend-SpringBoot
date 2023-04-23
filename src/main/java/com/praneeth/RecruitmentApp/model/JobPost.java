@@ -5,29 +5,47 @@ import javax.naming.Name;
 import java.util.Date;
 
 public class JobPost {
-    private int id;
-    private String job_role;
-    private String company;
-    private Date upload_date;
-    private String uname;
-    private String Abstract;
-    private String job_req;
-    private int total_applicant;
-    private String location;
+    protected int id;
+    protected String job_role;
+    protected String company;
+    protected String upload_date;
+    protected String uname;
+    protected int posted_by;
+    protected String anAbstract;
+    protected String job_req;
+    protected int total_applicant;
+    protected String location;
+
+    public JobPost(String job_role, int posted_by, String upload_date, String anAbstract, String job_req, String location) {
+        this.job_role = job_role;
+        this.upload_date = upload_date;
+        this.posted_by = posted_by;
+        this.anAbstract = anAbstract;
+        this.job_req = job_req;
+        this.location = location;
+    }
 
     public JobPost() {
         super();
     }
 
-    public JobPost(String job_role, String company, Date upload_date, String uname, String anAbstract, String job_req, int total_applicant,String location) {
+    public JobPost(String job_role, String company, String upload_date, String uname, String anAbstract, String job_req, int total_applicant,String location) {
         this.job_role = job_role;
         this.company = company;
         this.upload_date = upload_date;
         this.uname = uname;
-        Abstract = anAbstract;
+        this.anAbstract = anAbstract;
         this.job_req = job_req;
         this.total_applicant = total_applicant;
         this.location = location;
+    }
+
+    public int getPosted_by() {
+        return posted_by;
+    }
+
+    public void setPosted_by(int posted_by) {
+        this.posted_by = posted_by;
     }
 
     public int getId() {
@@ -54,11 +72,11 @@ public class JobPost {
         this.company = company;
     }
 
-    public Date getUpload_date() {
+    public String getUpload_date() {
         return upload_date;
     }
 
-    public void setUpload_date(Date upload_date) {
+    public void setUpload_date(String upload_date) {
         this.upload_date = upload_date;
     }
 
@@ -71,11 +89,11 @@ public class JobPost {
     }
 
     public String getAbstract() {
-        return Abstract;
+        return anAbstract;
     }
 
     public void setAbstract(String anAbstract) {
-        Abstract = anAbstract;
+        this.anAbstract = anAbstract;
     }
 
     public String getJob_req() {

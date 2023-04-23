@@ -5,6 +5,7 @@ import com.praneeth.RecruitmentApp.model.ProfileDetails;
 import com.praneeth.RecruitmentApp.model.User;
 import com.praneeth.RecruitmentApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Qualifier("UsrService")
 public class UserServiceImpl implements UserService {
 
 //    @Autowired

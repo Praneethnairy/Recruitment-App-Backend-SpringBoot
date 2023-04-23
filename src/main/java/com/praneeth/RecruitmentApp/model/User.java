@@ -1,11 +1,12 @@
 package com.praneeth.RecruitmentApp.model;
 
+//Open/Closed Principle User is closed for modification but functionality of user is extended through Applicant and Recruiter
 public class User {
-    private int uid;
+    protected int uid;
     private int utype;
-    private String uname;
-    private String uemail;
-    private String upassword;
+    protected String uname;
+    protected String uemail;
+    protected String upassword;
 
     public String getUpassword() {
         return upassword;

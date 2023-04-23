@@ -1,10 +1,8 @@
 package com.praneeth.RecruitmentApp.service;
 
-import com.praneeth.RecruitmentApp.model.Applicant;
-import com.praneeth.RecruitmentApp.model.ProfileDetails;
-import com.praneeth.RecruitmentApp.model.SkillUpdateRequest;
+import com.praneeth.RecruitmentApp.model.*;
 import org.springframework.stereotype.Repository;
-import com.praneeth.RecruitmentApp.model.userSkills;
+
 import java.util.List;
 
 @Repository
@@ -16,4 +14,14 @@ public interface ApplicantService {
     public List<String> fetchAllSkills();
 
     public ProfileDetails updateApplicantSkill(SkillUpdateRequest us);
+
+    public void updateResumePath(int uid,String path);
+
+    public boolean applyJob(int pid,int uid);
+
+    public boolean checkAppliedJob(int pid,int uid);
+
+    public List<ActiveApplication> getAllApplied(int uid);
+
+    public boolean withdraw(int pid);
 }

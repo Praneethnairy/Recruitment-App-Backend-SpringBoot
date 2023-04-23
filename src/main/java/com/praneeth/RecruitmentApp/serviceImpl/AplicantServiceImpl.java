@@ -1,12 +1,10 @@
 package com.praneeth.RecruitmentApp.serviceImpl;
 
 import com.praneeth.RecruitmentApp.DBUtil.DBUtil;
-import com.praneeth.RecruitmentApp.model.Applicant;
-import com.praneeth.RecruitmentApp.model.ProfileDetails;
-import com.praneeth.RecruitmentApp.model.SkillUpdateRequest;
-import com.praneeth.RecruitmentApp.model.userSkills;
+import com.praneeth.RecruitmentApp.model.*;
 import com.praneeth.RecruitmentApp.service.ApplicantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -18,6 +16,7 @@ import java.util.List;
 
 
 @Service
+@Qualifier("AplService")
 public class AplicantServiceImpl implements ApplicantService {
 
     Connection connection;
@@ -115,4 +114,115 @@ public class AplicantServiceImpl implements ApplicantService {
         return p;
     }
 
+    public void updateResumePath(int uid,String path){
+        try{
+            PreparedStatement slctStmt = connection.prepareStatement("select count(*) from userResume where uid = ?;");
+            slctStmt.setInt(1,uid);
+            ResultSet slctrs = slctStmt.executeQuery();
+            int rowCount = 0;
+            while (slctrs.next()){
+                rowCount = slctrs.getInt(1);
+            }
+            if(rowCount == 0){
+                PreparedStatement isrtStmt = connection.prepareStatement("insert into userResume(uid,path) values(?,?);");
+                isrtStmt.setInt(1,uid);
+                isrtStmt.setString(2,path);
+                isrtStmt.executeUpdate();
+            }
+            else{
+                PreparedStatement updtStmt = connection.prepareStatement("update userResume set path = ? where uid=?;");
+                updtStmt.setString(1,path);
+                updtStmt.setInt(2,uid);
+                updtStmt.executeUpdate();
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+    public boolean applyJob(int pid,int uid)
+    {
+        try{
+            PreparedStatement slctStmt = connection.prepareStatement("select id,path from userResume where uid = ?;");
+            slctStmt.setInt(1,uid);
+            ResultSet slctRs = slctStmt.executeQuery();
+            int resume = -1;
+            while(slctRs.next()){
+                if(slctRs.getString(2) != null)
+                    resume = slctRs.getInt(1);
+            }
+            if(resume != -1){
+                PreparedStatement isrtStmt = connection.prepareStatement("insert into submittedResume(pid,resume,uid) values (?,?,?);");
+                isrtStmt.setInt(1,pid);
+                isrtStmt.setInt(2,resume);
+                isrtStmt.setInt(3,uid);
+                isrtStmt.executeUpdate();
+                return true;
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean checkAppliedJob(int pid,int uid){
+        try{
+            PreparedStatement slctStmt = connection.prepareStatement("select count(*) from submittedResume where pid = ? and uid = ?;");
+            slctStmt.setInt(1,pid);
+            slctStmt.setInt(2,uid);
+            ResultSet slctRs = slctStmt.executeQuery();
+
+            int cnt = 0;
+            while(slctRs.next()){
+                cnt = slctRs.getInt(1);
+            }
+            if(cnt > 0){
+                return true;
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public List<ActiveApplication> getAllApplied(int uid){
+        List<ActiveApplication> active= new ArrayList<>();
+        try{
+            PreparedStatement slctStmt = connection.prepareStatement("with postDetail(id,job_role,company) as (select j.id,j.job_role, r.ucompany from jobpost as j join recruiter as r on j.posted_by=r.uid) select j.id,j.job_role,j.company,s.status from postDetail as j join submittedResume s on j.id=s.pid where s.uid = ?;");
+            slctStmt.setInt(1,uid);
+            ResultSet slctrs = slctStmt.executeQuery();
+            while(slctrs.next()){
+                ActiveApplication temp = new ActiveApplication();
+                temp.setPid(slctrs.getInt(1));
+                temp.setJobTitle(slctrs.getString(2));
+                temp.setCompany(slctrs.getString(3));
+                if(slctrs.getInt(4) == 0){
+                    temp.setStatus("Pending");
+                }
+                else if(slctrs.getInt(4) == 1){
+                    temp.setStatus("Rejected");
+                }
+                else{
+                    temp.setStatus("Selected");
+                }
+                active.add(temp);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return active;
+    }
+    public boolean withdraw(int pid){
+
+        try{
+            PreparedStatement delStmt = connection.prepareStatement("delete from submittedResume where pid = ?;");
+            delStmt.setInt(1,pid);
+            delStmt.executeUpdate();
+            return true;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }

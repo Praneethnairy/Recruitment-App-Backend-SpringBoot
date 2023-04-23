@@ -3,6 +3,7 @@ package com.praneeth.RecruitmentApp.serviceImpl;
 
 import com.praneeth.RecruitmentApp.DBUtil.DBUtil;
 import com.praneeth.RecruitmentApp.service.RecruiterService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -11,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Service
+@Qualifier("RecrtService")
 public class RecruiterServiceImpl implements RecruiterService {
     Connection connection;
 
